@@ -1,0 +1,6 @@
+--run tests
+mocha
+
+--run in spec folder tests
+--get all files below the folder test which has extensions js
+mocha "./test/**/*.spec.js"

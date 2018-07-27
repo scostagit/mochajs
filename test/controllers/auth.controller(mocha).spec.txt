@@ -1,0 +1,75 @@
+
+var assert = require('assert');
+var authController= require('../../controllers/auth.controller');
+
+/*
+ becarreful about this aproch, because it will running for each tests
+beforeEach(function(){
+    console.log('running before all 1'); //it will running many times. One for each test.
+});*/
+
+
+//it will run one for all test. 
+before(function(){
+     console.log('running before each');
+});
+
+describe('AuthController',function(){
+    //the place that you put your hooks it will be its scope. this beforeEach has its scope just into the AuthcController describe.
+    beforeEach(function(){
+        console.log('running before each');
+        authController.setRoles(['user']);
+    });
+
+    describe('isAuthorized  ',function(){
+
+        //you can pass a string as descript your hook
+         /* beforeEach('this function is error function',function(){
+            throw ({error:'your cod has broken here.'});
+        });*/
+
+        //~When use Only, just this test will runing
+        //it.only('it should return false if not authorized',function(){
+            it('it should return false if not authorized',function(){
+            //authController.setRoles(['user']); Ino longer need this
+            assert.equal(false,authController.isAuthorized('admin'));
+        });
+      
+        //skip you can jump this test. It won't be executed.
+       // it.skip('it should return true is authorized',function(){
+        it('it should return true is authorized',function(){
+            authController.setRoles(['user','admin']);
+            assert.equal(true, authController.isAuthorized('admin'));
+        });
+
+        it('my pending test one');
+        it('my pending test two');
+    });
+
+    //We use the key work only when we want to run just one specificy test.
+   //describe.only('isAuthorizedAsyn',function(){
+        describe('isAuthorizedAsyn',function(){
+            //when we are working with timeout function we should increse the time in Mocha's timeout property.
+            //the code below won't work with arrow function because the arrow functions changes the conext of this.
+            this.timeout(2500);
+            it('it should return false is not authorized',function(done){
+              //  authController.setRoles(['user']); I no longer need this
+                authController.isAuthorizedAsyn('admin', function(isAuth){
+                    assert.equal(false, isAuth);
+                    done();
+                });
+            });
+    });
+    
+    //dont use Arrow function with mocha when you are working context.
+    /*describe('isAuthorizedAsyn',()=>{        
+        //the code below won't work with arrow function because the arrow functions changes the conext of this.
+        this.timeout(2500);
+        it('it should return false is not authorized',(done)=>{
+            authController.isAuthorizedAsyn(['user'],'admin', function(isAuth){
+                assert.equal(false, isAuth);
+                done();
+            });
+        });
+    });*/
+});
